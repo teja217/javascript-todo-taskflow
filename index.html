@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskFlow – Task Management Dashboard</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <!-- ===== TOAST NOTIFICATION ===== -->
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <div class="container header__inner">
+      <div class="header__brand">
+        <div class="header__logo">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <rect width="32" height="32" rx="10" fill="url(#grad1)"/>
+            <path d="M9 16.5L13.5 21L23 11" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+              <linearGradient id="grad1" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#6C63FF"/>
+                <stop offset="1" stop-color="#4ECDC4"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div>
+          <h1 class="header__title">TaskFlow</h1>
+          <p class="header__subtitle">Stay focused. Get things done.</p>
+        </div>
+      </div>
+      <div class="header__right">
+        <div class="header__date" id="currentDate"></div>
+        <!-- Dark/Light Mode Toggle -->
+        <button
+          class="theme-toggle"
+          id="themeToggle"
+          aria-label="Toggle dark mode"
+          title="Toggle dark/light mode"
+        >
+          <span class="theme-toggle__icon theme-toggle__sun" aria-hidden="true">
+            <!-- Sun icon -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/>
+              <line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+          </span>
+          <span class="theme-toggle__icon theme-toggle__moon" aria-hidden="true">
+            <!-- Moon icon -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== MAIN ===== -->
+  <main class="main">
+    <div class="container">
+
+      <!-- STATS ROW -->
+      <section class="stats" aria-label="Task statistics">
+        <div class="stat-card stat-card--total">
+          <span class="stat-card__number" id="statTotal">0</span>
+          <span class="stat-card__label">Total Tasks</span>
+        </div>
+        <div class="stat-card stat-card--active">
+          <span class="stat-card__number" id="statActive">0</span>
+          <span class="stat-card__label">Active</span>
+        </div>
+        <div class="stat-card stat-card--done">
+          <span class="stat-card__number" id="statCompleted">0</span>
+          <span class="stat-card__label">Completed</span>
+        </div>
+      </section>
+
+      <!-- ADD TASK -->
+      <section class="add-task" aria-label="Add a new task">
+        <div class="add-task__form">
+          <input
+            type="text"
+            id="taskInput"
+            class="add-task__input"
+            placeholder="What needs to be done today?"
+            maxlength="200"
+            aria-label="New task title"
+            autocomplete="off"
+          />
+          <button class="btn btn--primary" id="addTaskBtn" aria-label="Add task">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            <span>Add Task</span>
+          </button>
+        </div>
+        <p class="add-task__hint">Press <kbd>Enter</kbd> to add quickly</p>
+      </section>
+
+      <!-- FILTERS & ACTIONS -->
+      <section class="controls" aria-label="Task filters and actions">
+        <div class="filters" role="group" aria-label="Filter tasks">
+          <button class="filter-btn filter-btn--active" data-filter="all" aria-pressed="true">All</button>
+          <button class="filter-btn" data-filter="active" aria-pressed="false">Active</button>
+          <button class="filter-btn" data-filter="completed" aria-pressed="false">Completed</button>
+        </div>
+        <button class="btn btn--danger-outline" id="clearCompletedBtn" aria-label="Clear all completed tasks">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+          </svg>
+          Clear Completed
+        </button>
+      </section>
+
+      <!-- TASK LIST -->
+      <section class="task-section" aria-label="Task list">
+        <ul class="task-list" id="taskList" aria-label="Tasks"></ul>
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" hidden>
+          <div class="empty-state__icon" aria-hidden="true">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+              <circle cx="32" cy="32" r="30" stroke="var(--color-border)" stroke-width="2" stroke-dasharray="6 4"/>
+              <path d="M22 32h20M32 22v20" stroke="var(--color-border)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="empty-state__title" id="emptyTitle">No tasks yet</h3>
+          <p class="empty-state__desc" id="emptyDesc">Add your first task above to get started!</p>
+        </div>
+      </section>
+
+    </div><!-- /.container -->
+  </main>
+
+  <!-- ===== EDIT MODAL ===== -->
+  <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+    <div class="modal">
+      <div class="modal__header">
+        <h2 class="modal__title" id="modalTitle">Edit Task</h2>
+        <button class="modal__close" id="modalClose" aria-label="Close dialog">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal__body">
+        <label for="editInput" class="modal__label">Task title</label>
+        <input
+          type="text"
+          id="editInput"
+          class="modal__input"
+          maxlength="200"
+          placeholder="Update your task..."
+          aria-required="true"
+        />
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--ghost" id="modalCancel">Cancel</button>
+        <button class="btn btn--primary" id="modalSave">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <p>TaskFlow &copy; <span id="footerYear"></span> &mdash; Built with Vanilla JavaScript &amp; Local Storage</p>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
